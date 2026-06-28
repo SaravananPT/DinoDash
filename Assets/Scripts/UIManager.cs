@@ -11,11 +11,23 @@ public class UIManager : MonoBehaviour
     public GameObject gamePanel;
     public GameObject gameOverPanel;
 
+    [Header("Game HUD")]
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI highScoreText;
+    public TextMeshProUGUI coinText;
+
     [Header("Game Over")]
     public TextMeshProUGUI finalScoreText;
-    public TextMeshProUGUI highScoreText;
+    public TextMeshProUGUI finalHighScoreText;
+    public TextMeshProUGUI finalCoinsText;
     public Button reviveButton;
     public Button restartButton;
+    public Button homeButton;
+
+    [Header("Home")]
+    public TextMeshProUGUI homeHighScoreText;
+    public Button playButton;
+    public Button skinsButton;
 
     private bool hasRevived = false;
 
@@ -27,8 +39,11 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         ShowHomeUI();
+        playButton.onClick.AddListener(() => GameManager.Instance.StartGame());
         reviveButton.onClick.AddListener(OnReviveClicked);
-        restartButton.onClick.AddListener(OnRestartClicked);
+        restartButton.onClick.AddListener(() => GameManager.Instance.RestartGame());
+        homeButton.onClick.AddListener(() => GameManager.Instance.RestartGame());
+        homeHighScoreText.text = "BEST: " + Mathf.FloorToInt(PlayerPrefs.GetFloat("HighScore", 0)).ToString();
     }
 
     public void ShowHomeUI()
@@ -48,8 +63,9 @@ public class UIManager : MonoBehaviour
     public void ShowGameOverUI()
     {
         gameOverPanel.SetActive(true);
-        finalScoreText.text = "Score: " + Mathf.FloorToInt(ScoreManager.Instance.GetScore()).ToString();
-        highScoreText.text = "Best: " + PlayerPrefs.GetFloat("HighScore", 0).ToString("F0");
+        finalScoreText.text = Mathf.FloorToInt(ScoreManager.Instance.GetScore()).ToString();
+        finalHighScoreText.text = "BEST  " + Mathf.FloorToInt(ScoreManager.Instance.GetHighScore()).ToString();
+        finalCoinsText.text = "🪙 " + ScoreManager.Instance.GetCoins().ToString();
         reviveButton.gameObject.SetActive(!hasRevived);
     }
 
@@ -59,20 +75,9 @@ public class UIManager : MonoBehaviour
         {
             hasRevived = true;
             reviveButton.gameObject.SetActive(false);
+            gameOverPanel.SetActive(false);
             GameManager.Instance.ReviveGame();
             FindObjectOfType<DinoController>().Revive();
-            gameOverPanel.SetActive(false);
         });
-    }
-
-    private void OnRestartClicked()
-    {
-        hasRevived = false;
-        GameManager.Instance.RestartGame();
-    }
-
-    public void OnStartClicked()
-    {
-        GameManager.Instance.StartGame();
     }
 }

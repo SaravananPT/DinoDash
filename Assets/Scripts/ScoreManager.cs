@@ -22,20 +22,20 @@ public class ScoreManager : MonoBehaviour
         if (GameManager.Instance.currentState != GameManager.GameState.Playing) return;
 
         score += GameManager.Instance.gameSpeed * Time.deltaTime;
-        scoreText.text = "Score: " + Mathf.FloorToInt(score).ToString();
+        scoreText.text = Mathf.FloorToInt(score).ToString();
 
         if (score > highScore)
         {
             highScore = score;
             PlayerPrefs.SetFloat("HighScore", highScore);
-            highScoreText.text = "Best: " + Mathf.FloorToInt(highScore).ToString();
+            highScoreText.text = "BEST " + Mathf.FloorToInt(highScore).ToString();
         }
     }
 
-    public void ResetScore()
-    {
-        score = 0;
-    }
-
+    private int coins;
+    public void AddCoin() { coins += 10; score += 10; }
+    public int GetCoins() => coins;
+    public void ResetScore() { score = 0; coins = 0; }
     public float GetScore() => score;
+    public float GetHighScore() => highScore;
 }

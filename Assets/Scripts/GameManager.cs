@@ -8,8 +8,9 @@ public class GameManager : MonoBehaviour
     public enum GameState { Home, Playing, Dead }
     public GameState currentState = GameState.Home;
 
-    public float gameSpeed = 5f;
-    public float speedIncreaseRate = 0.1f;
+    public float gameSpeed = 8f;
+    public float speedIncreaseRate = 0.05f;
+    public float maxSpeed = 30f;
 
     private void Awake()
     {
@@ -19,9 +20,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         if (currentState == GameState.Playing)
-        {
-            gameSpeed += speedIncreaseRate * Time.deltaTime;
-        }
+            gameSpeed = Mathf.Min(gameSpeed + speedIncreaseRate * Time.deltaTime, maxSpeed);
     }
 
     public void StartGame()
@@ -32,7 +31,10 @@ public class GameManager : MonoBehaviour
 
     public void DinoHit()
     {
+        if (currentState == GameState.Dead) return;
         currentState = GameState.Dead;
+        CameraShake.Instance.Shake(0.4f, 0.3f);
+        SoundManager.Instance.PlayDeath();
         UIManager.Instance.ShowGameOverUI();
         AdManager.Instance.ShowInterstitial();
     }
@@ -45,7 +47,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-        gameSpeed = 5f;
+        gameSpeed = 8f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

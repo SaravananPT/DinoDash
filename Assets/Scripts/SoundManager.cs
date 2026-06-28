@@ -4,34 +4,45 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance;
 
-    [Header("Audio Clips")]
-    public AudioClip jumpSound;
-    public AudioClip deathSound;
-    public AudioClip coinSound;
-    public AudioClip reviveSound;
-    public AudioClip backgroundMusic;
+    [Header("SFX")]
+    public AudioClip jumpClip;
+    public AudioClip deathClip;
+    public AudioClip coinClip;
+    public AudioClip reviveClip;
+    public AudioClip swipeClip;
+    public AudioClip slideClip;
 
-    private AudioSource sfxSource;
-    private AudioSource musicSource;
+    [Header("Music")]
+    public AudioClip[] worldMusics;
+
+    private AudioSource sfx;
+    private AudioSource music;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
-
         AudioSource[] sources = GetComponents<AudioSource>();
-        sfxSource = sources[0];
-        musicSource = sources[1];
+        sfx = sources[0];
+        music = sources[1];
     }
 
     private void Start()
     {
-        musicSource.clip = backgroundMusic;
-        musicSource.loop = true;
-        musicSource.Play();
+        PlayWorldMusic(0);
     }
 
-    public void PlayJump() => sfxSource.PlayOneShot(jumpSound);
-    public void PlayDeath() => sfxSource.PlayOneShot(deathSound);
-    public void PlayCoin() => sfxSource.PlayOneShot(coinSound);
-    public void PlayRevive() => sfxSource.PlayOneShot(reviveSound);
+    public void PlayWorldMusic(int worldIndex)
+    {
+        if (worldIndex >= worldMusics.Length) return;
+        music.clip = worldMusics[worldIndex];
+        music.loop = true;
+        music.Play();
+    }
+
+    public void PlayJump()  => sfx.PlayOneShot(jumpClip);
+    public void PlayDeath() => sfx.PlayOneShot(deathClip);
+    public void PlayCoin()  => sfx.PlayOneShot(coinClip);
+    public void PlayRevive()=> sfx.PlayOneShot(reviveClip);
+    public void PlaySwipe() => sfx.PlayOneShot(swipeClip);
+    public void PlaySlide() => sfx.PlayOneShot(slideClip);
 }
